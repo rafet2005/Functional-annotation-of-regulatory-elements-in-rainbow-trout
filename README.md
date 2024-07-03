@@ -69,10 +69,10 @@ for i in *filtered_sorted.bam; do out=${i/orted/orted_PCRDup};  java -jar ~/path
   
  # narrow peaks calling
  # [H3K4me3, H3K4me1, H3K27ac]
-for i in  H3K4me3*PCRDup.bam; do in=${i/H3K4me3/Input}; outdir=${i/H3K4me3*PCRDup\.bam/    Peak_H3K4me3}  ; out=${i/sorted_PCRDup\.bam/NarrowPeak};  out=${out/\/nfshome\/path\/Chipseq\/Map_0_sort\//}; macs3 callpeak -t $i -c $in -f BAM -g 2.3e9 -n $out --outdir $outdir  --keep-dup 3 -B --SPMR -q 0.01   ; done
+for i in  H3K4me3*PCRDup.bam; do in=${i/H3K4me3/Input}; outdir=${i/H3K4me3*PCRDup\.bam/Peak_H3K4me3}  ; out=${i/sorted_PCRDup\.bam/NarrowPeak};  out=${out/\/nfshome\/path\/Chipseq\/Map_0_sort\//}; macs3 callpeak -t $i -c $in -f BAM -g 2.3e9 -n $out --outdir $outdir  --keep-dup 3 -B --SPMR -q 0.01   ; done
  
  # broad peaks calling 
- for i in  H3K27me3*PCRDup.bam; do in=${i/H3K27me3/Input}; outdir=${i/H3K27me3*PCRDup\.     bam/Peak_H3K27me3}  ;out=${i/sorted_PCRDup\.bam/NarrowSpecialPeak};      out=${out/\/nfshome\/path\/Chipseq\/Map_0_sort\//}; macs3 callpeak -t $i -c $in -f BAM -g 2.3e9 -n $out --outdir $outdir  --keep-dup 3 -B --SPMR  --broad --broad-cutoff 0.1   ;  done
+ for i in  H3K27me3*PCRDup.bam; do in=${i/H3K27me3/Input}; outdir=${i/H3K27me3*PCRDup\.bam/Peak_H3K27me3}  ;out=${i/sorted_PCRDup\.bam/NarrowSpecialPeak};      out=${out/\/nfshome\/path\/Chipseq\/Map_0_sort\//}; macs3 callpeak -t $i -c $in -f BAM -g 2.3e9 -n $out --outdir $outdir  --keep-dup 3 -B --SPMR  --broad --broad-cutoff 0.1   ;  done
 ```
 
 #### ATACseq Analysis
@@ -106,7 +106,7 @@ for i in *summits.bed ; do out=${i/summits\.bed/Annotated\.csv} ; annotatePeaks.
  
  
  #extract CpG sites use bismark_methylation_extractor with --cytosine_report to get genome wide methylation
-for i in *deduplicated.bam ; do bismark_methylation_extractor -p   --merge_non_CpG  --multicore 2  --scaffolds   --genome_folder ../genome/ --cytosine_report   --bedGraph --    gzip $i ; done
+for i in *deduplicated.bam ; do bismark_methylation_extractor -p   --merge_non_CpG  --multicore 2  --scaffolds  --genome_folder ../genome/ --cytosine_report   --bedGraph --gzip $i ; done
  ## for individual run
  bismark_methylation_extractor -p  --include_overlap --merge_non_CpG   --scaffolds  --output  ../Bismark_clip53_local/   --genome_folder /localstorage/Methylation_Data/genome/  --cytosine_report   --bedGraph --gzip  zr4449_10_S9_R1_001_val_1_bismark_bt2_pe.deduplicated.bam
  
@@ -117,7 +117,7 @@ for i in *deduplicated.bam ; do bismark_methylation_extractor -p   --merge_non_C
 
 # genome wide header
 #the file end with the following : bismark_bt2_pe.CpG_report.txt.gz
-<chromosome> <position> <strand> <count methylated> <count unmethylated> <C-context>       <trinucleotide context>
+<chromosome> <position> <strand> <count methylated> <count unmethylated> <C-context>  <trinucleotide context>
 
 #further analysis using a local script
 # Append to the file info about CPG location within the promoter and TSS               
@@ -161,12 +161,12 @@ for i in *sorted_PCRDup.bam; do out=${i/\.bam/\.bed} ; bamToBed -i $i > $out ; d
   
 
 # Convert bed file to binarize as one of these command
-java -mx32G -jar ~/path_to/ChromHMM.jar BinarizeBed -b 200  path_to_/                     TroutArlee_ChrLength  /pathh_to_dicroty_hold_bed_files/BED_files/  cellmarkfiletable.txt /Output_directory/
+java -mx32G -jar ~/path_to/ChromHMM.jar BinarizeBed -b 200  path_to_/TroutArlee_ChrLength  /pathh_to_dicroty_hold_bed_files/BED_files/  cellmarkfiletable.txt /Output_directory/
   
   
 # Run the model using different models and determine the one based on genomic features
 #java -mx32G -jar ChromHMM.jar LearnModel /binarizedDataDirctory  MYOUTPUTDirectory 10  hg18
-java -mx32G -jar ~/path_to/ChromHMM.jar  LearnModel  -p 6 -printstatebyline -              printposterior  /path_to_binaries_files_directory/ /OUTPUTdirectory  10 Trout
+java -mx32G -jar ~/path_to/ChromHMM.jar  LearnModel  -p 6 -printstatebyline -printposterior  /path_to_binaries_files_directory/ /OUTPUTdirectory  10 Trout
 ```
 
 #### ChromHMM plot generating data
