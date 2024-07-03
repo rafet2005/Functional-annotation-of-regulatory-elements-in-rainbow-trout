@@ -11,7 +11,7 @@
 #### Trim low-quality base and adapter using trimgalor and fastqc
 
 ``` bash
-# check QC within the same directroy of the fastq
+# check QC within the same directory of the fastq
 # -t number of threads
 fastqc -t 6 *.fq.gz
 multiqc .
@@ -25,7 +25,7 @@ cd trim
 trim_galore --paired --length 50 --cores 4 --fastqc R1.fastq R2.fstq
 # or for all files
 for i in *R1_001.fastq.gz; do j=${i/R1/R2} ; trim_galore --paired  --cores  4 --fastqc  $i $j ; done
-# --fastqc will run the fastqc and remove any low quality reads
+# --fastqc will run the fastqc and remove any low-quality reads
 ```
 
 #### Build bowtie2 index and map reads
@@ -35,10 +35,10 @@ for i in *R1_001.fastq.gz; do j=${i/R1/R2} ; trim_galore --paired  --cores  4 --
 bowtie2-build GCF_013265735.2_USDA_OmykA_1.1_genomic.fna Arleebowtie2
 
 # map reads
-# for pair end reads adding the 2>> tmp_file will save the stat of the mapping
+# for pair-end reads adding the 2>> tmp_file will save the state of the mapping
  for i in *R1_001_val_1.fq.gz ; do echo $i >> map_stat  ; j=${i/R1/R2} ; out=${i/R1_001_val_1\.fq\.gz/Arl\.bam}; out=${out/fastq/trim}; bowtie2 -p 4 -q --end-to-end --very-sensitive  -x /scratch3/trout_ChipSeq/genomeArlee/Arleebowtie2   -p 24  -k 10 -x  /path_to_refrence_genome/Arlee_bowtie/Arleebowtie2 -q  $i   $j 2>> map_stat  |  samtools     view  -h -bS -o $out; done
  
- # Using Samtools sort the bam file and create an index file
+ # Using Samtools, sort the bam file and create an index file
  # sort bam and create an index
  for i in *bam; do samtools index $i ; done
  for i in *bam ; do  out=${i/\.bam/sorted\.bam} ; samtools sort --threads 6 $i -o $out ; done
@@ -57,7 +57,7 @@ for i in *filtered_sorted.bam; do out=${i/orted/orted_PCRDup};  java -jar ~/path
 # The following parameters were used for macs2
   -n: name string
   -g: genome size as 2341688614
-  --keep-dup, '3': this is an arbitrary numbe, and we select to keep three  
+  --keep-dup, '3': this is an arbitrary number, and we select to keep three  
   --extsize, '200': extend reads in 5'->3' direction to 200 bp
   -B: store the fragment pileup, control lambda in bedGraph files
   --SPMR 
@@ -97,7 +97,7 @@ for i in *summits.bed ; do out=${i/summits\.bed/Annotated\.csv} ; annotatePeaks.
  or i in *R1.fq.gz ; do j=${i/R1/R2} ; trim_galore --paired --cores 6 --fastqc $i $j ; done
  
  #Alignments and methylation calling
- #Bismark_genome_preparation ../genome/ the folder of the genome has a fast file and includes bowtie index files, too
+ #Bismark_genome_preparation ../genome/The folder of the genome has a fast file and includes bowtie index files, too
  #genome had to be prepared before using
  bismark_genome_preparation [options] <path_to_genome_folder>
   
@@ -105,13 +105,13 @@ for i in *summits.bed ; do out=${i/summits\.bed/Annotated\.csv} ; annotatePeaks.
  for i in *val_1.fq.gz ; do j=${i/R1/R2} ; j=${j/_1\./_2\.}; bismark --non_directional --local  ../genome_Arrly/ -1 $i -2 $j -p 4 ; done
  
  
- #extract CpG sites use bismark_methylation_extractor with --cytosine_report to get genome wide methylation
+ #extract CpG sites use bismark_methylation_extractor with --cytosine_report to get genome-wide methylation
 for i in *deduplicated.bam ; do bismark_methylation_extractor -p   --merge_non_CpG  --multicore 2  --scaffolds  --genome_folder ../genome/ --cytosine_report   --bedGraph --gzip $i ; done
  ## for individual run
  bismark_methylation_extractor -p  --include_overlap --merge_non_CpG   --scaffolds  --output  ../Bismark_clip53_local/   --genome_folder /localstorage/Methylation_Data/genome/  --cytosine_report   --bedGraph --gzip  zr4449_10_S9_R1_001_val_1_bismark_bt2_pe.deduplicated.bam
  
  
-## Output header of bismark
+## Output header of Bismark
 # The coverage output end with .cov
 <chromosome> <start position> <end position> <methylation percentage> <count methylated> <count unmethylated>
 
@@ -135,7 +135,7 @@ get_meth_cluster_1k.pl to get the location within TSS
  samtools faidx refrenceGenome.fa
  cut -f1,2 refrenceGenome.fai > TroutArrly_chrom_lenth
   
- # Convert gtf or gff to genePred and bigGenePred.txt file of ucsc broweser use the next two steps
+ # Convert gtf or gff to genePred and bigGenePred.txt file of ucsc browser use the next two steps
  gtfToGenePred Omyk_2.0_sorted.gtf Omyk_2.0_genePred -allErrors
  genePredToBigGenePred Omyk_2.0_genePred Omyk_2.0_bigGenePred.txt
   
@@ -148,8 +148,8 @@ java -mx32G -jar ~/path/ChromHMM/ChromHMM.jar ConvertGeneTable -l /path/TroutArl
 for i in *sorted_PCRDup.bam; do out=${i/\.bam/\.bed} ; bamToBed -i $i > $out ; done
  
  # Prepare the cellmarkfiletable.txt file, such as
- #use all availabel tissue in our case, we use sex chipseq and 3 atac seq 
- # file avalabe for refrences
+ #use all available tissue in our case, we use sex chipseq and 3 atac seq 
+ # file available for references
  cell1 mark1 cell1_mark1.bed cell1_control.bed
  cell1 mark2 cell1_mark2.bed cell1_control.bed
  cell2 mark1 cell2_mark1.bed cell2_control.bed
@@ -165,6 +165,7 @@ java -mx32G -jar ~/path_to/ChromHMM.jar BinarizeBed -b 200  path_to_/TroutArlee_
   
   
 # Run the model using different models and determine the one based on genomic features
+# All bed files used for annotation are available in the SupportFile folder
 #java -mx32G -jar ChromHMM.jar LearnModel /binarizedDataDirctory  MYOUTPUTDirectory 10  hg18
 java -mx32G -jar ~/path_to/ChromHMM.jar  LearnModel  -p 6 -printstatebyline -printposterior  /path_to_binaries_files_directory/ /OUTPUTdirectory  10 Trout
 ```
@@ -173,16 +174,16 @@ java -mx32G -jar ~/path_to/ChromHMM.jar  LearnModel  -p 6 -printstatebyline -pri
 
 ``` bash
 # The following analysis was used to create data for several plots
- #for emission coverage use the missions_xx.txt file
+ #for emission coverage, use the missions_xx.txt file
  #convert it to csv, clean the header, and reorder it using awk script in Vim
  % !awk 'BEGIN {OFS=","}; {print $1, $6, $3, $4, $5, $2}'
   
  # #### Calculate Cov average and std
- # Create an overlap list using the linux command
+ # Create an overlap list using the Linux command
  ls *overlap.txt > overlap_list
  while read p; do touch New_overlap; cut -f2 $p |paste -  New_overlap > TTM_NEW ; mv TTM_NEW New_overlap  ; done < overlap_list
- #after cleaning the file and converting it to csv, remove top and bottom lines
- #convert it to csv file
+ #after cleaning the file and converting it to csv, remove the top and bottom lines
+ #convert it to a csv file
  # use the following Python script with numpy as follow # part of the code
  import numpy as np
  array = np.loadtxt('New_overlap.csv',  delimiter=',')
@@ -195,7 +196,7 @@ java -mx32G -jar ~/path_to/ChromHMM.jar  LearnModel  -p 6 -printstatebyline -pri
 # and plot it as a heatmap
 
  
-## Retrieve the individual stat for all tissue combined into one file. OLD APPROCH
+## Retrieve the individual stat for all tissue combined into one file. OLD APPROACH
 ##./parse_chrohmm_chr_start_any.pl file_list
  
 #combin state for down analysis not used for enrichment using Python and the actual result 
@@ -205,7 +206,7 @@ for i in *_10_dense.bed; do for j in {1..10} ;do  grep -P "\t$j\t" $i >> stat$j.
 for i in stat* ; do out=${i/\.csv/_sort\.csv} ; sort -k1,1 -k2,2n $i  > $out ; done 
 for i in *sort.csv ; do out=${i/sort\.csv/merg\.csv} ; bedtools merge -i $i >  $out ; done 
 for i in {1..10};  do   in=stat"$i"_merg.csv; s=s/$/\\t"$i"/  ; sed -i $s $in  ; done      
-# This will add the stat to the file which needed later on for the cluster file
+# This will add the stat to the file, which needed later on for the cluster file
 for i in {1..10} ; do in=stat"$i"_merg.csv ; out=Enr_stat$i.Arrly; bedtools intersect -a ~/path/Arrly_annotaion_file_Enrichmnet_sorted -b $in -wo  > $out ; done
 # Arrly_annotaion_file_Enrichmnet_sorted file that has all the features as a bed file, such as
       NC_048565.1 2098683 2098684 TES
