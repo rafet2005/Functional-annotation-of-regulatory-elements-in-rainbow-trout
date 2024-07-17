@@ -15,6 +15,7 @@
 # -t number of threads
 fastqc -t 6 *.fq.gz
 multiqc .
+# open file for view or could use xdg-open
 firefox multiqc_report.html
 
 # or create a folder such as trim
@@ -22,6 +23,7 @@ mkdir trim
 cd trim
 # and run the following command
 # for individual pair end file
+# length parameter is set minimum pair-end length
 trim_galore --paired --length 50 --cores 4 --fastqc R1.fastq R2.fstq
 # or for all files
 for i in *R1_001.fastq.gz; do j=${i/R1/R2} ; trim_galore --paired  --cores  4 --fastqc  $i $j ; done
@@ -36,7 +38,7 @@ bowtie2-build GCF_013265735.2_USDA_OmykA_1.1_genomic.fna Arleebowtie2
 
 # map reads
 # for pair-end reads adding the 2>> tmp_file will save the state of the mapping
- for i in *R1_001_val_1.fq.gz ; do echo $i >> map_stat  ; j=${i/R1/R2} ; out=${i/R1_001_val_1\.fq\.gz/Arl\.bam}; out=${out/fastq/trim}; bowtie2 -p 4 -q --end-to-end --very-sensitive  -x /scratch3/trout_ChipSeq/genomeArlee/Arleebowtie2   -p 24  -k 10 -x  /path_to_refrence_genome/Arlee_bowtie/Arleebowtie2 -q  $i   $j 2>> map_stat  |  samtools     view  -h -bS -o $out; done
+ for i in *R1_001_val_1.fq.gz ; do echo $i >> map_stat  ; j=${i/R1/R2} ; out=${i/R1_001_val_1\.fq\.gz/Arl\.bam}; out=${out/fastq/trim}; bowtie2  -q --end-to-end --very-sensitive  -x /scratch3/trout_ChipSeq/genomeArlee/Arleebowtie2   -p 24  -k 10 -x  /path_to_refrence_genome/Arlee_bowtie/Arleebowtie2 -q  $i   $j 2>> map_stat  |  samtools     view  -h -bS -o $out; done
  
  # Using Samtools, sort the bam file and create an index file
  # sort bam and create an index
